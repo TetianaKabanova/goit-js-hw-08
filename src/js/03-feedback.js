@@ -25,8 +25,8 @@ function onTextareaInput(event) {
 
 function onFormSubmit(event) {
   event.preventDefault();
-  localStorage.removeItem(STORAGE_KEY);
   event.currentTarget.reset();
+  localStorage.removeItem(STORAGE_KEY);
   console.log(feedbackForm);
 }
 
