@@ -1,30 +1,43 @@
 import throttle from 'lodash.throttle';
-const LOCALSTORAGE_KEY = 'feedback-form-state';
-const form = document.querySelector('.feedback-form');
 
-form.addEventListener('input', throttle(onInputChange, 500));
-form.addEventListener('submit', onFormSubmit);
+const refs = {
+  form: document.querySelector('.feedback-form'),
+  input: document.querySelector('input'),
+  textarea: document.querySelector('.feedback-form textarea'),
+};
+const STORAGE_KEY = 'feedback-form-state';
 
-function onInputChange(event) {
-  const feedbackForm = {
-    email: form.email.value,
-    message: form.message.value,
-  };
+const feedbackForm = {
+  email: '',
+  message: '',
+};
 
+populateTextarea();
+
+refs.form.addEventListener('input', throttle(onTextareaInput, 500));
+refs.form.addEventListener('submit', onFormSubmit);
+
+function onTextareaInput(event) {
+  feedbackForm[event.target.name] = event.target.value;
   const feedbackFormJSON = JSON.stringify(feedbackForm);
-  localStorage.setItem(LOCALSTORAGE_KEY, feedbackFormJSON);
+  localStorage.setItem(STORAGE_KEY, feedbackFormJSON);
 }
 
 function onFormSubmit(event) {
   event.preventDefault();
+  localStorage.removeItem(STORAGE_KEY);
+  event.currentTarget.reset();
   console.log(feedbackForm);
-  form.reset();
 }
 
-function populateTexarea() {
-  const savedMessage = localStorage.getItem('feedback-form-state');
-
-  if (savedMessage) {
-    console.log(savedMessage);
+function populateTextarea() {
+  const savedMessage = localStorage.getItem(STORAGE_KEY);
+  if (savedMessage === null) {
+    return;
   }
+
+  refs.textarea.value = savedMessage.message || '';
+  refs.input.value = savedMessage.email || '';
+  feedbackForm.email = savedMessage.email || '';
+  feedbackForm.message = savedMessage.message || '';
 }
