@@ -15,18 +15,8 @@ let feedbackForm = {
 
 populateTextarea();
 
-reloadPage();
-
 refs.form.addEventListener('input', throttle(onTextareaInput, 500));
 refs.form.addEventListener('submit', onFormSubmit);
-
-function reloadPage() {
-  if (feedbackForm) {
-    refs.input.value = feedbackForm.email || '';
-    refs.textarea.value = feedbackForm.message || '';
-  }
-  localStorage.removeItem(STORAGE_KEY);
-}
 
 function onTextareaInput(event) {
   feedbackForm[event.target.name] = event.target.value;
@@ -43,7 +33,7 @@ function onFormSubmit(event) {
 }
 
 function populateTextarea() {
-  const savedMessage = localStorage.getItem(STORAGE_KEY);
+  const savedMessage = JSON.parse(localStorage.getItem(STORAGE_KEY));
   if (savedMessage === null) {
     return;
   }
